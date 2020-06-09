@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<script>
+    $(document).ready(function () {
+        $('#add_stocks').click(function () {
+            $('.ui.modal').modal('show');
+        })
+
+        $('#save').click(function () {
+            var symbols = $("#symbols").val();
+
+            console.log(symbols);
+
+            var stockSymbols = symbols.split("\n");
+
+            console.log(stockSymbols);
+
+            for (var i = 0; i < stockSymbols.length; ++i) {
+                console.log(stockSymbols[i]);
+
+                $.ajax({
+                    url: '/stock',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ "symbol": stockSymbols[i] }),
+                    dataType: 'json'
+                })
+
+                $('.ui.modal').modal('hide');
+
+            }
+        })
+    });
+</script>
+
+<div>
+
+    <form action="">
+
+        <div class="ui input focus">
+            <input name="forward_pe" type="text" placeholder="P/E Ration" value="{{ forward_pe or '' }}">
+        </div>
+
+        <div class="ui input focus">
+            <input name="dividend_yield" type="text" placeholder="Dividend Yield" value="{{ dividend_yield }}">
+        </div>
+
+        <div class="ui checkbox">
+            <input type="checkbox" name="ma50" {% if ma50 %}checked="checked"{% endif %}>
+            <label>Above 50 Day MA</label>
+        </div>
+
+        <div class="ui checkbox">
+            <input type="checkbox" name="ma200" {% if ma200 %}checked="checked"{% endif %}>
+            <label>Above 200 Day MA</label>
+        </div>
+
+        <button type="submit" class="ui primary button">Filter</button>
+
+    </form>
+
+</div>
+
+<div>
+    <button id="add_stocks" class="ui button">Add Stocks</button>
+</div>
+
+<div>
+
+    <table class="ui celled table">
+        <caption>Symbols of Added Stocks</caption>
+        <thead>
+            <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">Price</th>
+                <th scope="col">P/E</th>
+                <th scope="col">EPS</th>
+                <th scope="col">Dividend Yield</th>
+                <th scope="col">50 Days MA</th>
+                <th scope="col">200 Days MA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks %}
+            <tr>
+                <td data-label="Symbol">{{ stock.symbol }}</td>
+                <td data-label="Price">{{ stock.price }}</td>
+                <td data-label="P/E">{{ stock.forward_pe }}</td>
+                <td data-label="P/E">{{ stock.forward_eps }}</td>
+                <td data-label="P/E">{{ stock.dividend_yield }}</td>
+                <td data-label="P/E">{{ stock.ma50 }}</td>
+                <td data-label="P/E">{{ stock.ma200 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="ui modal">
+    <em class="close icon"></em>
+    <div class="header">
+        Profile Picture
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="field">
+                <label>Add Symbols</label>
+                <textarea id="symbols"></textarea>
+            </div>
+        </div>
+        <div class="actions">
+            <div id="save" class="ui positive right labeled icon button">
+                Add Symbols
+                <em class="plus icon"></em>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
