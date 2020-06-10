@@ -36,6 +36,8 @@ async def dashboad(request: Request, forward_pe=None, dividend_yield=None, ma50=
 
     stocks = db.query(Stocks)
 
+    # print(forward_pe, dividend_yield, ma50, ma200)
+
     if forward_pe:
         stocks = stocks.filter(Stocks.forward_pe < forward_pe)
 
